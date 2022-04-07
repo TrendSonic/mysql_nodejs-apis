@@ -5,9 +5,8 @@ module.exports = {
 		const sql = "SELECT * FROM customers";
 		return new Promise ((res, rej) => {
 			con.query(sql, (err, data) => {
-				(res, rej) => {
-					return err ? rej(err) : res(data)
-				}
+				console.log(data)
+				return err ? rej(err) : res('data')
 		});
 	});
 	},

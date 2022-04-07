@@ -6,8 +6,8 @@ app.listen(3000, () => console.log('Express server is runnig at port no : 3000')
 
 
 // Get all customers
-app.get('/customers', async (req, res) => {
-    res.json(await customers.getAllCustomers())
+app.get('/customers', (req, res) => {
+    res.json(customers.getAllCustomers(req))
 });
 
 // Get a customer
