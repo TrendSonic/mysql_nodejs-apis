@@ -1,62 +1,62 @@
-const con = require('./db')
+const { ConnectContactLens } = require('aws-sdk');
+const SQL = require('./db')
 
 module.exports = {
-	getAllCustomers: () => {
-		const sql = "SELECT * FROM customers";
-		return new Promise ((res, rej) => {
-			con.query(sql, (err, data) => {
-				console.log(data)
-				return err ? rej(err) : res('data')
-		});
-	});
+	getAllCustomers: async () => {
+		const check = "SELECT * FROM customers";
+		return await SQL(check)
 	},
 	getCustomer: async (req) => {
-		if(req.params.id == undefined || isNaN(req.params.id)) {
+		if(req.body.id == undefined || isNaN(req.body.id)) {
 			console.log("Please provide a valid id")
 		}
-
-		const customer_id = req.params.id
-
-		const sql = 'SELECT * FROM customers WHERE id = ?'
-    con.query(sql, [customer_id], (err, data) => {
-			if(data.length < 1) {
-				console.log("This user does not exist")
-			} else {
-				console.log(data)
-			}
-    })
+		const check = 'SELECT * FROM customers WHERE id = ?'
+		return await SQL(check, [req.body.id])
 	},
-	addCustomer: (req) => {
-		const name = req.body.name
-    const address = req.body.address
-    var sql = `INSERT INTO customers (name, address) VALUES ('${name}', '${address}')`;
-    con.query(sql, (err) => {
-			console.log('Succesfully added.')
-    })
+	addCustomer: async (req) => {
+    var check = 'INSERT INTO customers (name, address) VALUES (?, ?)';
+		return await SQL(check, [req.body.name, req.body.address])
 	},
-	deleteCustomer: (req) => {
-		const id = req.body.id
-		const sql = `DELETE FROM customers WHERE id = '${id}'`
-    con.query(sql, id, (err, data) => {
-        if(err) {
-					console.log(err)
-				} else {
-					console.log('Succesfully deleted.')
-				}
-    })
+	deleteCustomer: async (req) => {
+		const check = 'DELETE FROM customers WHERE id = ?'
+		return await SQL(check, [req.body.id])
 	},
-	updateCustomer: async (req, res) => {
-		const myName = req.body.name
-    const myAddress = req.body.address
-    
-		const sql = `UPDATE customers SET name = '${myName}', address = '${myAddress}' WHERE id = ${req.params.id}`
-
-		con.query(sql, [req.params.id], (err, data) => {
-			if(err) {
-				console.log(err)
-			} else {
-				console.log('Customer succesfully updated.')
-			}
-	})
+	updateCustomer: async (req, res) => {    
+		const check = `UPDATE customers SET name = ?, address = ? WHERE id = ${req.params.id}`
+		return await SQL(check, [req.body.name, req.body.address])
 	}
 }
+
+	// this is working with req.body
+	// updateCustomer: async (req, res) => {
+	// 	const myName = req.body.name
+  //   const myAddress = req.body.address
+    
+	// 	const sql = `UPDATE customers SET name = '${myName}', address = '${myAddress}' WHERE id = ${req.params.id}`
+
+	// 	con.query(sql, [req.params.id], (err, data) => {
+	// 		if(err) {
+	// 			console.log(err)
+	// 		} else {
+	// 			console.log('Customer succesfully updated.')
+	// 		}
+	// 	})
+	// }
+
+
+	// PROMISES
+		// return new Promise((res, rej) => {
+		// 	con.query(sql, (err, data) => {
+		// 		return err ? rej(err) : res(data)
+		// });
+		// });
+
+		// return new Promise((res, rej) => {
+		// 	con.query(sql, [req.params.id], (err, data) => {
+		// 		if(data.length < 1) {
+		// 			return 'This user does not exist'
+		// 		} else {
+		// 			return err ? rej(err) : res(data)
+		// 		}
+		// 	})
+		// })

@@ -16,4 +16,13 @@ con.connect((err) => {
     }
 });
 
-module.exports = con
+const SQL = (query, params = []) => {
+    return new Promise((resolve, reject) => {
+        con.query(query, params,  function(err, res) {
+            if(err) reject(err)
+            resolve(res)
+        })
+    })
+}
+
+module.exports = SQL
